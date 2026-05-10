@@ -47,19 +47,32 @@ from fastapi.responses import StreamingResponse
 async def chat_endpoint(request: ChatRequest):
     async def text_generator():
         try:
+            # OpenRouter recommends these headers
+            extra_headers = {
+                "HTTP-Referer": "https://github.com/syedahsanrazabukhari/basic-agents",
+                "X-Title": "Basic Agents Chatbot",
+            }
+            
+            # Using the agent's instructions as the system message
             stream = await external_client.chat.completions.create(
-                model="openrouter/free",
+                model=model.model,
                 messages=[
-                    {"role": "system", "content": "You are a helpful AI Assistant."},
+                    {"role": "system", "content": agent.instructions},
                     {"role": "user", "content": request.message}
                 ],
-                stream=True
+                stream=True,
+                extra_headers=extra_headers
             )
             async for chunk in stream:
                 if chunk.choices and chunk.choices[0].delta.content:
                     yield chunk.choices[0].delta.content
         except Exception as e:
-            yield f"\n\n[Error: {str(e)}]"
+            error_msg = str(e)
+            print(f"Error in chat_endpoint: {error_msg}")
+            if "401" in error_msg or "api_key" in error_msg.lower():
+                yield "\n\n[Error: API Key invalid or not found. Please check your .env file.]"
+            else:
+                yield f"\n\n[Error: {error_msg}]"
 
     return StreamingResponse(text_generator(), media_type="text/plain")
 
