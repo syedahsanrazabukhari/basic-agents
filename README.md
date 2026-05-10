@@ -36,3 +36,7 @@ A FastAPI-based chat application with a beautiful glassmorphism UI and a CLI cha
 - **Backend**: Python, FastAPI, Uvicorn
 - **AI**: openai-agents, OpenRouter (open-source models)
 - **Frontend**: Vanilla HTML/JS/CSS (Glassmorphism design)
+
+## Project Status
+- **Status**: ✅ Fully Functional
+- **Last Updated**: May 2026
