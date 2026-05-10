@@ -6,18 +6,18 @@ import asyncio
 
 load_dotenv()
 
-gemini_api_key = os.getenv("GEMINI_API_KEY")
+openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
 
-if not gemini_api_key:
-    raise ValueError("Error: GEMINI_API_KEY not found in .env file. Add your Gemini API key to proceed.")
+if not openrouter_api_key:
+    raise ValueError("Error: OPENROUTER_API_KEY not found in .env file. Add your OpenRouter API key to proceed.")
 
 external_client = AsyncOpenAI(
-    api_key=gemini_api_key,
-    base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+    api_key=openrouter_api_key,
+    base_url="https://openrouter.ai/api/v1",
 )
 
 model = OpenAIChatCompletionsModel(
-    model="gemini-2.0-flash",
+    model="openrouter/free",
     openai_client=external_client
 )
 
@@ -35,8 +35,15 @@ async def main():
         model=model
     )
 
-    result = await Runner.run(agent, input("whats your Question: "), run_config=config)
-    print(result.final_output)
+    print("Chatbot started! Type 'exit' to stop the conversation.\n")
+    while True:
+        user_input = input("whats your Question: ")
+        if user_input.lower() in ["exit", "quit", "stop"]:
+            print("Conversation ended. Goodbye!")
+            break
+            
+        result = await Runner.run(agent, user_input, run_config=config)
+        print(f"\nAssistant: {result.final_output}\n")
 
 
 
