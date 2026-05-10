@@ -10,6 +10,8 @@ from agents.run import RunConfig
 load_dotenv()
 
 openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
+if openrouter_api_key:
+    openrouter_api_key = openrouter_api_key.strip("\"'")
 
 if not openrouter_api_key:
     raise ValueError("Error: OPENROUTER_API_KEY not found in .env file.")
